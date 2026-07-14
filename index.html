@@ -136,6 +136,38 @@
     animation: shake .45s ease;
     margin-bottom: 10px;
   }
+  .incorrect.correct {
+    color: #4fc06a;
+    animation: none;
+  }
+
+  .quote {
+    font-size: clamp(19px, 5vw, 28px);
+    font-style: italic;
+    line-height: 1.6;
+    color: #f4efe6;
+    max-width: 520px;
+    margin-bottom: 26px;
+  }
+  .quote s {
+    color: #7d838b;
+    text-decoration-color: #e3484d;
+    text-decoration-thickness: 2px;
+  }
+  .quote .edit {
+    color: #c9a24b;
+    font-style: normal;
+    font-weight: 700;
+  }
+  .quote .attribution {
+    display: block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-style: normal;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: 2px;
+    color: #8b9199;
+  }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20% { transform: translateX(-12px) rotate(-2deg); }
@@ -202,31 +234,24 @@
   </div>
 
   <div class="buttons">
-    <button class="answer" onclick="answer()">YES</button>
-    <button class="answer" onclick="answer()">NO</button>
+    <button class="answer" onclick="answer(true)">YES</button>
+    <button class="answer" onclick="answer(false)">NO</button>
   </div>
 
-  <div class="footer">CERTIFIED BY THE GOLBORNE INSTITUTE FOR THE STUDY OF PALS · TO DATE, 100% OF RESPONDENTS HAVE ANSWERED INCORRECTLY</div>
+  <div class="footer">CERTIFIED BY THE GOLBORNE INSTITUTE FOR THE STUDY OF MATES · TO DATE, 100% OF RESPONDENTS ARE MATES</div>
 
   <div class="overlay" id="overlay">
-    <div class="incorrect" id="incorrect">INCORRECT</div>
+    <div class="incorrect" id="verdict-head">INCORRECT</div>
     <div class="verdict-sub" id="sub"></div>
-    <div class="pals">THEY ARE<br>PALS 🍻</div>
-    <button class="again" onclick="reset()">appeal the verdict</button>
+    <div class="quote" id="quote" style="display:none">
+      &ldquo;Been nice chatting, shame u <s>couldn't</s> <span class="edit">COULD</span> stop flirting, <s>coulda been</s> <span class="edit">we are</span> mates&rdquo;
+      <span class="attribution">EXHIBIT B, AS AMENDED BY THE INSTITUTE</span>
+    </div>
+    <div class="pals">THEY ARE<br>MATES 🍻</div>
+    <button class="again" onclick="reset()">take the quiz again</button>
   </div>
 
 <script>
-  let attempts = 0;
-
-  const lines = [
-    "It was a trick question. Friendship doesn't cover it.",
-    "Wrong again. Still pals.",
-    "You keep pressing buttons. They keep being pals.",
-    "There is no correct button. The answer is pals.",
-    "It has always been pals. It will always be pals.",
-    "Stop it. Pals. Forever. Case closed."
-  ];
-
   function buzzer() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -239,6 +264,24 @@
       o.connect(g).connect(ctx.destination);
       o.start();
       o.stop(ctx.currentTime + 0.55);
+    } catch (e) {}
+  }
+
+  function ding() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [523.25, 783.99].forEach((freq, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        const t = ctx.currentTime + i * 0.15;
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        o.connect(g).connect(ctx.destination);
+        o.start(t);
+        o.stop(t + 0.5);
+      });
     } catch (e) {}
   }
 
@@ -261,10 +304,26 @@
     }
   }
 
-  function answer() {
-    attempts++;
-    buzzer();
-    document.getElementById("sub").textContent = lines[Math.min(attempts - 1, lines.length - 1)];
+  function answer(isYes) {
+    const head = document.getElementById("verdict-head");
+    const sub = document.getElementById("sub");
+    const quote = document.getElementById("quote");
+
+    if (isYes) {
+      ding();
+      head.textContent = "CORRECT";
+      head.classList.add("correct");
+      sub.textContent = "Yes. Obviously.";
+      sub.style.display = "block";
+      quote.style.display = "none";
+    } else {
+      buzzer();
+      head.textContent = "INCORRECT";
+      head.classList.remove("correct");
+      sub.style.display = "none";
+      quote.style.display = "block";
+    }
+
     const ov = document.getElementById("overlay");
     ov.classList.remove("show");
     void ov.offsetWidth;
