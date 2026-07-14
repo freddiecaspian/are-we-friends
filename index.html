@@ -25,15 +25,6 @@
     overflow-x: hidden;
   }
 
-  .kicker {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #8b9199;
-    margin-bottom: 18px;
-  }
-
   h1 {
     font-size: clamp(28px, 7vw, 48px);
     font-weight: 400;
@@ -95,17 +86,6 @@
   }
   button.answer:hover { background: #f4efe6; color: #101418; transform: translateY(-2px); }
   button.answer:active { transform: translateY(1px) scale(.97); }
-
-  .footer {
-    position: fixed;
-    bottom: 12px;
-    left: 0; right: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: #565c63;
-    padding: 0 20px;
-  }
 
   /* ---------- verdict overlay ---------- */
   .overlay {
@@ -215,7 +195,6 @@
 </head>
 <body>
 
-  <div class="kicker">Official Friendship Assessment · Question 1 of 1</div>
   <h1>Are these two people friends?</h1>
 
   <div class="faces">
@@ -228,8 +207,6 @@
     <button class="answer" onclick="answer(true)">YES</button>
     <button class="answer" onclick="answer(false)">NO</button>
   </div>
-
-  <div class="footer">CERTIFIED BY THE GOLBORNE INSTITUTE FOR THE STUDY OF MATES · TO DATE, 100% OF RESPONDENTS ARE MATES</div>
 
   <div class="overlay" id="overlay">
     <div class="incorrect" id="verdict-head">INCORRECT</div>
